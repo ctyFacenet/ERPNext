@@ -1,0 +1,37 @@
+services:
+  dev_mariadb:
+    image: docker.io/mariadb:10.6
+    platform: linux/amd64
+    command:
+      - --character-set-server=utf8mb4
+      - --collation-server=utf8mb4_unicode_ci
+      - --skip-character-set-client-handshake
+      - --skip-innodb-read-only-compressed
+    environment:
+      MYSQL_ROOT_PASSWORD: 123
+    volumes:
+      - dev_mariadb-data:/var/lib/mysql
+
+  dev_redis-cache:
+    image: redis:6.2-alpine
+    platform: linux/amd64
+
+  dev_redis-queue:
+    image: redis:6.2-alpine
+    platform: linux/amd64
+
+  dev_frappe:
+    image: docker.io/frappe/bench:latest
+    platform: linux/amd64
+    command: sleep infinity
+    environment:
+      - SHELL=/bin/bash
+    volumes:
+      - ..:/workspace:cached
+    working_dir: /workspace/development
+    ports:
+      - 8000-8005:8000-8005
+      - 9000-9005:9000-9005
+
+volumes:
+  dev_mariadb-data:
