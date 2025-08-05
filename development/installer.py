@@ -212,7 +212,6 @@ def create_site_in_bench(args):
         f"--mariadb-user-host-login-scope=%",
         f"--db-root-password=123",  # Replace with your MariaDB password
         f"--admin-password={args.admin_password}",
-        f"--set-default"
     ]
     apps = os.listdir(f"{os.getcwd()}/{args.bench_name}/apps")
     apps.remove("frappe")
@@ -226,6 +225,10 @@ def create_site_in_bench(args):
     )
     subprocess.call(
         ["bench", "--site", args.site_name, "enable-scheduler"],
+        cwd=os.path.join(os.getcwd(), args.bench_name),
+    )
+    subprocess.call(
+        ["bench", "use", args.site_name],
         cwd=os.path.join(os.getcwd(), args.bench_name),
     )
 
