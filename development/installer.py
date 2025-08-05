@@ -212,6 +212,7 @@ def create_site_in_bench(args):
         f"--mariadb-user-host-login-scope=%",
         f"--db-root-password=123",  # Replace with your MariaDB password
         f"--admin-password={args.admin_password}",
+        f"--set-default"
     ]
     apps = os.listdir(f"{os.getcwd()}/{args.bench_name}/apps")
     apps.remove("frappe")

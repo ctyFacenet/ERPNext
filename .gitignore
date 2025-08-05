@@ -4,7 +4,7 @@
 # mounted volume
 sites
 
-development/*
+# development/*
 !development/README.md
 !development/installer.py
 !development/apps-example.json
@@ -14,12 +14,12 @@ development/*
 .idea
 
 # VS Code
-.vscode/**
-!.vscode/extensions.json
+# .vscode/**
+# !.vscode/extensions.json
 
 # VS Code devcontainer
-.devcontainer
-*.code-workspace
+# .devcontainer
+# *.code-workspace
 
 # Python
 *.pyc
