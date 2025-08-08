@@ -2,5 +2,8 @@
   "python.defaultInterpreterPath": "${workspaceFolder}/frappe-bench/env/bin/python",
   "files.associations": {
     "*.html": "jinja"
-  }
+  },
+  "git.detectSubmodules": true,
+  "git.autoRepositoryDetection": "subFolders",
+  "git.scanRepositories": ["./frappe-bench/apps/tahp"],
 }

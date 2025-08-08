@@ -1,3 +1,5 @@
+name: erpnext
+
 services:
   dev_mariadb:
     image: docker.io/mariadb:10.6
@@ -28,7 +30,7 @@ services:
     environment:
       - SHELL=/bin/bash
     volumes:
-      - ..:/workspace:cached
+      - ../development:/workspace/development:cached
     working_dir: /workspace/development
     ports:
       - 8000-8005:8000-8005

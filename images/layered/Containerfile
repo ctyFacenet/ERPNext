@@ -4,7 +4,7 @@ FROM frappe/build:${FRAPPE_BRANCH} AS builder
 
 ARG FRAPPE_BRANCH=version-15
 ARG FRAPPE_PATH=https://github.com/frappe/frappe
-ARG APPS_JSON_BASE64
+ARG APPS_JSON_BASE64=Ww0KICB7DQogICAgInVybCI6ICJodHRwczovL2dpdGh1Yi5jb20vZnJhcHBlL2VycG5leHQuZ2l0IiwNCiAgICAiYnJhbmNoIjogInZlcnNpb24tMTUiDQogIH0sDQogIHsNCiAgICAidXJsIjogImh0dHBzOi8vZ2l0aHViLmNvbS9IaWV1Q2FvVGx1L3RhaHAuZ2l0IiwNCiAgICAiYnJhbmNoIjogIm1haW4iDQogIH0NCl0NCg==
 
 USER root
 
@@ -28,7 +28,13 @@ RUN export APP_INSTALL_ARGS="" && \
     /home/frappe/frappe-bench && \
   cd /home/frappe/frappe-bench && \
   echo "{}" > sites/common_site_config.json && \
-  find apps -mindepth 1 -path "*/.git" | xargs rm -fr
+  find apps -mindepth 1 -path "*/.git" ! -path "*/tahp/.git" | xargs rm -fr
+
+# Luôn cập nhật code mới nhất
+ARG REBUILD_TS
+RUN cd /home/frappe/frappe-bench/apps/tahp && \
+    git fetch --all && \
+    git reset --hard upstream/main
 
 FROM frappe/base:${FRAPPE_BRANCH} AS backend
 
