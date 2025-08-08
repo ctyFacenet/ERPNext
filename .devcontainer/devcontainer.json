@@ -9,7 +9,8 @@
         "ms-vscode.live-server",
         "grapecity.gc-excelviewer",
         "mtxr.sqltools",
-        "visualstudioexptteam.vscodeintellicode"
+        "visualstudioexptteam.vscodeintellicode",
+        "mechatroner.rainbow-csv"
       ],
       "settings": {
         "terminal.integrated.profiles.linux": {
