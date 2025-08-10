@@ -2,23 +2,42 @@
 chcp 65001 >nul
 setlocal enabledelayedexpansion
 
+rem --- Kiểm tra container backend có đang chạy không ---
+docker ps -q -f name=erpnext_production-backend-1 > temp.txt
+set /p BACKEND_RUNNING=<temp.txt
+del temp.txt
+
 rem --- Tạo thư mục backups nếu chưa có ---
 if not exist backups (
     mkdir backups
 )
 
-echo ===== Chạy backup trong container erpnext_production-backend-1 =====
-docker exec erpnext_production-backend-1 bench --site frontend backup
+if defined BACKEND_RUNNING (
+    echo ===== Chạy backup trong container erpnext_production-backend-1 =====
+    docker exec erpnext_production-backend-1 bench --site frontend backup
 
-echo ===== Copy file backup ra thư mục backups trên host =====
-rem Copy toàn bộ file trong thư mục backup frontend
-docker cp erpnext_production-backend-1:/home/frappe/frappe-bench/sites/frontend/private/backups/. backups\
+    echo ===== Copy file backup ra thư mục backups trên host =====
+    rem Copy toàn bộ file trong thư mục backup frontend
+    docker cp erpnext_production-backend-1:/home/frappe/frappe-bench/sites/frontend/private/backups/. backups\
+
+    echo ===== Xóa file backup trong container để tránh tích tụ =====
+    docker exec erpnext_production-backend-1 bash -c "rm -rf /home/frappe/frappe-bench/sites/frontend/private/backups/*"
+
+    echo ===== Xóa cache, file tạm không cần thiết trong container =====
+    docker exec erpnext_production-backend-1 bash -c "bench --site frontend clear-cache"
+    docker exec erpnext_production-backend-1 bash -c "bench --site frontend clear-website-cache"
+    docker exec erpnext_production-backend-1 bash -c "rm -rf /home/frappe/frappe-bench/sites/frontend/public/files/.cache"
+)
 
 echo ===== Dừng và xóa container, network, giữ volume =====
 docker compose -f pwd_production.yml down
+docker network prune -f
+docker builder prune --filter "dangling=true" -f
 
+if defined BACKEND_RUNNING (
 echo ===== Xóa image tahp:latest =====
 docker rmi tahp:latest
+)
 
 echo ===== Xóa các Docker volumes không dùng (ngoại trừ vscode*, erpnext*) =====
 for /f "tokens=*" %%v in ('docker volume ls -q') do (
@@ -54,7 +73,9 @@ powershell -Command "docker build --build-arg REBUILD_TS=$(Get-Date -Format 'yyy
 echo ===== Khởi động lại docker compose =====
 docker compose -f pwd_production.yml up -d --force-recreate
 
-echo ===== Chạy migrate cho site frontend =====
-docker exec erpnext_production-backend-1 bench --site frontend migrate
+echo ===== Xóa các image không dùng =====
+docker image prune -f
 
-endlocal
+if defined BACKEND_RUNNING (
+    docker exec erpnext_production-backend-1 bench --site frontend migrate
+)
