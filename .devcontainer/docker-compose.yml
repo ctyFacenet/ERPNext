@@ -18,10 +18,14 @@ services:
   dev_redis-cache:
     image: redis:6.2-alpine
     platform: linux/amd64
+    volumes:
+      - dev_redis-cache-data:/data
 
   dev_redis-queue:
     image: redis:6.2-alpine
     platform: linux/amd64
+    volumes:
+      - dev_redis-queue-data:/data
 
   dev_frappe:
     image: docker.io/frappe/bench:latest
@@ -38,3 +42,5 @@ services:
 
 volumes:
   dev_mariadb-data:
+  dev_redis-cache-data:
+  dev_redis-queue-data:

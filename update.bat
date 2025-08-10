@@ -54,4 +54,7 @@ powershell -Command "docker build --build-arg REBUILD_TS=$(Get-Date -Format 'yyy
 echo ===== Khởi động lại docker compose =====
 docker compose -f pwd_production.yml up -d --force-recreate
 
+echo ===== Chạy migrate cho site frontend =====
+docker exec erpnext_production-backend-1 bench --site frontend migrate
+
 endlocal
