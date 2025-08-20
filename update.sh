@@ -30,8 +30,6 @@ fi
 
 echo "===== Dừng và xóa container, network, giữ volume ====="
 docker compose -f pwd_production.yml down
-docker network prune -f
-docker builder prune --filter "dangling=true" -f
 
 if [ -n "$BACKEND_RUNNING" ]; then
     echo "===== Xóa image tahp:latest ====="
@@ -72,9 +70,6 @@ docker build --build-arg REBUILD_TS="$TS" -t tahp:latest -f images/layered/Conta
 
 echo "===== Khởi động lại docker compose ====="
 docker compose -f pwd_production.yml up -d --force-recreate
-
-echo "===== Xóa các image không dùng ====="
-docker image prune -f
 
 if [ -n "$BACKEND_RUNNING" ]; then
     docker exec erpnext_production-backend-1 bench --site frontend migrate
